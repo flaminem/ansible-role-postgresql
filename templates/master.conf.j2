@@ -87,8 +87,10 @@ ssl = true                              # (change requires restart)
 #ssl_ciphers = 'ALL:!ADH:!LOCATIONSOW:!EXP:!MD5:@STRENGTH' # allowed SSL ciphers
                                         # (change requires restart)
 #ssl_renegotiation_limit = 512MB        # amount of data between renegotiations
+{% if pg_version >= 9.2 %}
 ssl_cert_file = '/etc/ssl/certs/ssl-cert-snakeoil.pem'  # (changedangeange requires restart)
 ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key' # (change requires restart)
+{% endif %}
 #ssl_ca_file = ''                       # (change requires restart)
 #ssl_crl_file = ''                      # (change requires restart)
 #password_encryption = on

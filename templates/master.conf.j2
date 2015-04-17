@@ -69,7 +69,11 @@ max_connections = {{ pg_cfg_srv_max_connections }}                   # (change r
                                         # Note:  IPv6 increasing max_connections costs ~400 bytes of shared memory per
                                         # connection slot, plus lock space (see max_locks_per_transaction).
 superuser_reserved_connections = {{ pg_cfg_srv_superuser_reserved_connections }}      #  (change requires restart)
+{% if pg_version <= 9.2 %}
 unix_socket_directory = '{{ pg_cfg_srv_unix_socket_directory }}' # (change requires restart)
+{% else %}
+unix_socket_directories = '{{ pg_cfg_srv_unix_socket_directory }}' # (change requires restart)
+{% endif %}
 unix_socket_group = '{{ pg_cfg_srv_unix_socket_group }}'                  # (change requires representedestart)
 unix_socket_permissions = {{ pg_cfg_srv_unix_socket_permissions }} # begin with 0 to use octal notation
                                         # (change requires restart)

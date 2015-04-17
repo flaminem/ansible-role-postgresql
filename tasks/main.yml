@@ -3,23 +3,17 @@
   apt: pkg={{ item }} state=installed
   with_items:
     - python-pycurl
-  tags: 
-    - packages
-    - postgres
+  tags: [packages, postgres]
 
 - name: Include Ubuntu tasks
   include: ubuntu.yml
   when: not "{{ ansible_distribution }}" != "Ubuntu"
-  tags: 
-    - packages
-    - postgres
+  tags: [packages, postgres]
 
 - name: Include Debian tasks
   include: debian.yml
   when: not "{{ ansible_distribution }}" != "Debian"
-  tags: 
-    - packages
-    - postgres
+  tags: [packages, postgres]
 
 - name: Ensure packages are installed
   apt: pkg={{ item }}
@@ -31,10 +25,7 @@
     - python-psycopg2
   register: db_setup
   environment: pg_proxy_env
-  tags: 
-    - configuration
-    - packages
-    - postgres
+  tags: [configuration, packages, postgres]
 
 - name: Setup postgres cluster to default to utf8 | stop cluster
   # if the dbs haven't been created yet, we want to destroy the whole db
@@ -42,10 +33,8 @@
   sudo: yes
   sudo_user: postgres
   shell: pg_dropcluster --stop {{ pg_version }} main
-  when: db_setup.changed and pg_recreate_cluster # only do this if the dbs haven't been created yet
-  tags: 
-    - configuration
-    - postgres
+  when: pg_recreate_cluster or db_setup.changed # only do this if the dbs haven't been created yet
+  tags: [configuration, postgres]
 
 - name: Setup postgres cluster to default to utf8 | start cluster
   # if the dbs haven't been created yet, we want to destroy the whole db
@@ -53,27 +42,19 @@
   sudo: yes
   sudo_user: postgres
   shell: pg_createcluster --start -e {{ pg_encoding }} {{ pg_version }} main
-  when: db_setup.changed and pg_recreate_cluster # only do this if the dbs haven't been created yet
-  tags: 
-    - configuration
-    - postgres
+  when: pg_recreate_cluster or db_setup.changed # only do this if the dbs haven't been created yet
+  tags: [configuration, postgres]
 
 - name: Update pg_hba.conf file
   template: src=pg_hba.conf.j2 dest=/etc/postgresql/{{ pg_version }}/main/pg_hba.conf owner=postgres group=postgres mode=0640
   notify: restart postgresql
-  tags: 
-    - configuration
-    - postgres
+  tags: [configuration, postgres]
 
 - name: Update postgres.conf file
   template: src=master.conf.j2 dest=/etc/postgresql/{{ pg_version }}/main/postgresql.conf owner=postgres group=postgres mode=0644
   notify: restart postgresql
-  tags: 
-    - configuration
-    - postgres
+  tags: [configuration, postgres]
 
 - name: ensure postgresql server is started
   service: name=postgresql state=started enabled=yes arguments={{ pg_version }} pattern="/{{ pg_version }}/.*/postgres"
-  tags: 
-    - configuration
-    - postgres
+  tags: [configuration, postgres]

@@ -24,7 +24,7 @@
     - libpq-dev
     - python-psycopg2
   register: db_setup
-  environment: pg_proxy_env
+  environment: "{{ pg_proxy_env }}"
   tags: [configuration, packages, postgres]
 
 - name: Setup postgres cluster to default to utf8 | stop cluster

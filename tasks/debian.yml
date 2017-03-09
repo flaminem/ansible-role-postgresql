@@ -1,6 +1,6 @@
 ---
 - name: debian | add postgres repositories
-  sudo: true
+  become: true
   lineinfile:
     dest=/etc/apt/sources.list
     line="deb http://apt.postgresql.org/pub/repos/apt/ squeeze-pgdg main"
@@ -10,5 +10,5 @@
 
 - name: debian | add pg keys
   shell: curl -sSL "https://www.postgresql.org/media/keys/ACCC4CF8.asc" | apt-key add -
-  sudo: true
+  become: true
   when: pg_repo == 'postgresql.org'
